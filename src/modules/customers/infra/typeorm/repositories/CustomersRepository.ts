@@ -19,11 +19,17 @@ class CustomersRepository implements ICustomersRepository {
 
     await this.ormRepository.save(customer);
 
+    delete customer.created_at;
+    delete customer.updated_at;
+
     return customer;
   }
 
   public async findById(id: string): Promise<Customer | undefined> {
     const findCustomer = await this.ormRepository.findOne(id);
+
+    delete findCustomer?.created_at;
+    delete findCustomer?.updated_at;
 
     return findCustomer;
   }
@@ -34,6 +40,9 @@ class CustomersRepository implements ICustomersRepository {
         email,
       },
     });
+
+    delete findCustomer?.created_at;
+    delete findCustomer?.updated_at;
 
     return findCustomer;
   }
