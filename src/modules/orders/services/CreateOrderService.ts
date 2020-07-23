@@ -1,10 +1,7 @@
-import { inject, injectable } from 'tsyringe';
-
-import AppError from '@shared/errors/AppError';
-
-import IProductsRepository from '@modules/products/repositories/IProductsRepository';
 import ICustomersRepository from '@modules/customers/repositories/ICustomersRepository';
-import Order from '../infra/typeorm/entities/Order';
+import IProductsRepository from '@modules/products/repositories/IProductsRepository';
+import AppError from '@shared/errors/AppError';
+import { inject, injectable } from 'tsyringe';
 import IOrdersRepository from '../repositories/IOrdersRepository';
 
 interface IProduct {
@@ -28,7 +25,7 @@ class CreateOrderService {
     private customersRepository: ICustomersRepository,
   ) {}
 
-  public async execute({ customer_id, products }: IRequest): Promise<Order> {
+  public async execute({ customer_id, products }: IRequest): Promise<any> {
     const customer = await this.customersRepository.findById(customer_id);
 
     if (!customer) {
@@ -92,7 +89,13 @@ class CreateOrderService {
       }),
     );
 
-    return order;
+    return {
+      ...order,
+      order_products: order.order_products.map(product => ({
+        ...product,
+        price: product.price.toFixed(2),
+      })),
+    };
   }
 }
 

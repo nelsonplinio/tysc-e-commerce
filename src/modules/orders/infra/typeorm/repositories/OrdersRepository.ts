@@ -26,7 +26,12 @@ class OrdersRepository implements IOrdersRepository {
   }
 
   public async findById(id: string): Promise<Order | undefined> {
-    const order = await this.ormRepository.findOne(id);
+    const order = await this.ormRepository.findOne({
+      where: {
+        id,
+      },
+      relations: ['customer'],
+    });
 
     delete order?.updated_at;
     delete order?.created_at;
